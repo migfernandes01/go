@@ -4,10 +4,9 @@ import "fmt"
 
 func main() {
 	// define variables/const (type inference happens)
-	var conferenceName = "Go Conference"
+	conferenceName := "Go Conference" // alternative way to define a var using type inference
 	const conferenceTickets = 50
-	// alternative way to define a var using type inference
-	remainingTickets := 50
+	var remainingTickets uint = 50 // uint is a positive int
 
 	// print type of vars/consts
 	fmt.Printf("conferenceName is %T, conferenceTickets is %T\n", conferenceName, conferenceTickets)
@@ -18,11 +17,29 @@ func main() {
 	fmt.Println("Get your tickets here to attend")
 
 	// define vars
-	var userName string
-	var ticketAmount int
+	var firstName string
+	var lastName string
+	var email string
+	var ticketAmount uint // positive int
 
-	// assign content to vars
-	userName = "Tom"
-	ticketAmount = 2
-	fmt.Printf("User %v booked %v tickets.", userName, ticketAmount)
+	fmt.Print("Enter your first name: ")
+	// scan method takes pointer of var
+	fmt.Scan(&firstName)
+
+	fmt.Print("Enter your last name: ")
+	// scan method takes pointer of var
+	fmt.Scan(&lastName)
+
+	fmt.Print("Enter your email address: ")
+	// scan method takes pointer of var
+	fmt.Scan(&email)
+
+	fmt.Print("Enter number of tickets to buy: ")
+	// scan method takes pointer of var
+	fmt.Scan(&ticketAmount)
+
+	remainingTickets = remainingTickets - ticketAmount
+
+	fmt.Printf("Thank you %v %v for booking %v tickets, you will receive them in your email: %v\n", firstName, lastName, ticketAmount, email)
+	fmt.Printf("There are %v tickets left.\n", remainingTickets)
 }
