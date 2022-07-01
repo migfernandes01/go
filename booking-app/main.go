@@ -16,6 +16,12 @@ func main() {
 	fmt.Println("We have a total of", conferenceTickets, "tickets and", remainingTickets, "of them are still available")
 	fmt.Println("Get your tickets here to attend")
 
+	// array of strings that can hold up to 50 elements
+	// var bookings [50]string
+
+	// slice
+	var bookings[]string
+
 	// define vars
 	var firstName string
 	var lastName string
@@ -40,6 +46,18 @@ func main() {
 
 	remainingTickets = remainingTickets - ticketAmount
 
-	fmt.Printf("Thank you %v %v for booking %v tickets, you will receive them in your email: %v\n", firstName, lastName, ticketAmount, email)
+	// assign user's input to the first element of bookings array
+	// bookings[0] = firstName + " " + lastName
+
+	// append info to next position in slice
+	bookings = append(bookings, firstName + " " + lastName)
+
+	// slice info
+	fmt.Printf("\nBookings slice: %v\n", bookings)
+	fmt.Printf("First value: %v\n", bookings[0])
+	fmt.Printf("Slice type: %T\n", bookings)
+	fmt.Printf("Slice length: %v\n\n", len(bookings))
+
+	fmt.Printf("Thank you %v for booking %v tickets, you will receive them in your email: %v\n", bookings[0], ticketAmount, email)
 	fmt.Printf("There are %v tickets left.\n", remainingTickets)
 }
