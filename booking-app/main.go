@@ -5,87 +5,37 @@ import (
 	"strings"
 )
 
-func main() {
-	// define variables/const (type inference happens)
-	conferenceName := "Go Conference" // alternative way to define a var using type inference
+// package level variables(all functions can access):
+
+// define variables/const (type inference happens)
+	var conferenceName = "Go Conference" // alternative way to define a var using type inference
 	const conferenceTickets = 50
-	var remainingTickets uint = 50 // uint is a positive int
+	var remainingTickets uint = 50 		// uint is a positive int
+	var bookings[]string				// slice
 
-	// print type of vars/consts
-	fmt.Printf("conferenceName is %T, conferenceTickets is %T\n", conferenceName, conferenceTickets)
+func main() {
 
-	// print template strings
-	fmt.Printf("Welcome to %v\n", conferenceName)
-	fmt.Println("We have a total of", conferenceTickets, "tickets and", remainingTickets, "of them are still available")
-	fmt.Println("Get your tickets here to attend")
-
-	// array of strings that can hold up to 50 elements
-	// var bookings [50]string
-
-	// slice
-	var bookings[]string
+	// call greet users function passing params
+	greetUsers()
 
 	// loop through user's input code
 	// infinte loop
 	for {
-		// define vars
-		var firstName string
-		var lastName string
-		var email string
-		var ticketAmount uint // positive int
+		// call function to get user inuput
+		firstName, lastName, email, ticketAmount := getUserInput()		
 
-		fmt.Print("Enter your first name: ")
-		// scan method takes pointer of var
-		fmt.Scan(&firstName)
-
-		fmt.Print("Enter your last name: ")
-		// scan method takes pointer of var
-		fmt.Scan(&lastName)
-
-		fmt.Print("Enter your email address: ")
-		// scan method takes pointer of var
-		fmt.Scan(&email)
-
-		fmt.Print("Enter number of tickets to buy: ")
-		// scan method takes pointer of var
-		fmt.Scan(&ticketAmount)
-
-		// bool var for name validity
-		isValidName := len(firstName) >= 2 && len(lastName) >= 2
-		// bool var for email validity
-		isEmailValid := strings.Contains(email, "@")
-		// bool var for tickets amount validity
-		isTicketsAmountValid := ticketAmount > 0 && ticketAmount < remainingTickets
+		// call function to validate user input
+		isValidName, isEmailValid, isTicketsAmountValid :=  validateUserInput(firstName, lastName, email, ticketAmount)
 
 		// check validations	
 		if isValidName && isEmailValid && isTicketsAmountValid{
-			remainingTickets = remainingTickets - ticketAmount
+			// call function to book tickets
+			bookTicket(ticketAmount, firstName, lastName)
 
-			// assign user's input to the first element of bookings array
-			// bookings[0] = firstName + " " + lastName
+			// call function to print first names
+			firstNames := printFirstNames()
 
-			// append info to next position in slice
-			bookings = append(bookings, firstName + " " + lastName)
-
-			// slice info
-			// fmt.Printf("\nBookings slice: %v\n", bookings)
-			// fmt.Printf("First value: %v\n", bookings[0])
-			// fmt.Printf("Slice type: %T\n", bookings)
-			// fmt.Printf("Slice length: %v\n\n", len(bookings))
-
-			// define string slice
-			firstNames := []string{}
-
-			// iterate through bookings slice
-			// we get the index and value in each iteration
-			for _, booking := range bookings {
-				// splits string with white space as separator (we get an array with 2 elements)
-				var names = strings.Fields(booking)
-				// append first name(names[0]) to firstNames slice
-				firstNames = append(firstNames, names[0])
-			}
-
-			fmt.Printf("First names of bookings: %v\n", firstNames)
+			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 			fmt.Printf("Thank you %v for booking %v tickets, you will receive them in your email: %v\n", bookings[0], ticketAmount, email)
 			fmt.Printf("There are %v tickets left.\n\n", remainingTickets)
 
@@ -107,4 +57,83 @@ func main() {
 			continue
 		}
 	}
+}
+
+// function to print greeting message
+func greetUsers() {
+	// print type of vars/consts
+	fmt.Printf("conferenceName is %T, conferenceTickets is %T\n", conferenceName, conferenceTickets)
+
+	// print template strings
+	fmt.Printf("Welcome to %v\n", conferenceName)
+	fmt.Println("We have a total of", conferenceTickets, "tickets and", remainingTickets, "of them are still available")
+	fmt.Println("Get your tickets here to attend")
+}
+
+// function to print first names
+// return slice of strings
+func printFirstNames() []string {
+	// define string slice
+	firstNames := []string{}
+
+	// iterate through bookings slice
+	// we get the index and value in each iteration
+	for _, booking := range bookings {
+		// splits string with white space as separator (we get an array with 2 elements)
+		var names = strings.Fields(booking)
+		// append first name(names[0]) to firstNames slice
+		firstNames = append(firstNames, names[0])
+	}
+
+	return firstNames
+}
+
+// function to validate user input
+// returns 3 booleans
+func validateUserInput(firstName string, lastName string, email string, ticketAmount uint) (bool, bool, bool) {
+	// bool var for name validity
+	isValidName := len(firstName) >= 2 && len(lastName) >= 2
+	// bool var for email validity
+	isEmailValid := strings.Contains(email, "@")
+	// bool var for tickets amount validity
+	isTicketsAmountValid := ticketAmount > 0 && ticketAmount <= remainingTickets
+
+	return isValidName, isEmailValid, isTicketsAmountValid
+}
+
+// function to get user input
+// returns 3 strings and one positive int
+func getUserInput() (string, string, string, uint) {
+	// define vars
+	var firstName string
+	var lastName string
+	var email string
+	var ticketAmount uint // positive int
+
+	fmt.Print("Enter your first name: ")
+	// scan method takes pointer of var
+	fmt.Scan(&firstName)
+
+	fmt.Print("Enter your last name: ")
+	// scan method takes pointer of var
+	fmt.Scan(&lastName)
+
+	fmt.Print("Enter your email address: ")
+	// scan method takes pointer of var
+	fmt.Scan(&email)
+
+	fmt.Print("Enter number of tickets to buy: ")
+	// scan method takes pointer of var
+	fmt.Scan(&ticketAmount)
+
+	// return user input
+	return firstName, lastName, email, ticketAmount
+}
+
+//
+func bookTicket(ticketAmount uint, firstName string, lastName string) {
+	// decrement remaining tickets
+	remainingTickets = remainingTickets - ticketAmount
+	// append info to next position in slice
+	bookings = append(bookings, firstName + " " + lastName)
 }
