@@ -96,7 +96,6 @@ func main() {
 				break
 			}	
 		} else {
-			// show error message
 			if !isValidName {
 				fmt.Println("Invalid name, please try again!")
 			} else if !isEmailValid {
