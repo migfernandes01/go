@@ -3,15 +3,16 @@ package main
 import (
 	"fmt"
 	"strings"
+	"booking-app/helper"
 )
 
 // package level variables(all functions can access):
 
 // define variables/const (type inference happens)
-	var conferenceName = "Go Conference" // alternative way to define a var using type inference
-	const conferenceTickets = 50
-	var remainingTickets uint = 50 		// uint is a positive int
-	var bookings[]string				// slice
+var conferenceName = "Go Conference" // alternative way to define a var using type inference
+const conferenceTickets = 50
+var remainingTickets uint = 50 		// uint is a positive int
+var bookings[]string				// slice
 
 func main() {
 
@@ -25,7 +26,7 @@ func main() {
 		firstName, lastName, email, ticketAmount := getUserInput()		
 
 		// call function to validate user input
-		isValidName, isEmailValid, isTicketsAmountValid :=  validateUserInput(firstName, lastName, email, ticketAmount)
+		isValidName, isEmailValid, isTicketsAmountValid :=  helper.ValidateUserInput(firstName, lastName, email, ticketAmount, remainingTickets)
 
 		// check validations	
 		if isValidName && isEmailValid && isTicketsAmountValid{
@@ -86,19 +87,6 @@ func printFirstNames() []string {
 	}
 
 	return firstNames
-}
-
-// function to validate user input
-// returns 3 booleans
-func validateUserInput(firstName string, lastName string, email string, ticketAmount uint) (bool, bool, bool) {
-	// bool var for name validity
-	isValidName := len(firstName) >= 2 && len(lastName) >= 2
-	// bool var for email validity
-	isEmailValid := strings.Contains(email, "@")
-	// bool var for tickets amount validity
-	isTicketsAmountValid := ticketAmount > 0 && ticketAmount <= remainingTickets
-
-	return isValidName, isEmailValid, isTicketsAmountValid
 }
 
 // function to get user input
