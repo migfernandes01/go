@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"booking-app/helper"
-	"strconv"
 )
 
 // package level variables(all functions can access):
@@ -11,8 +10,16 @@ import (
 // define variables/const (type inference happens)
 var conferenceName = "Go Conference" // alternative way to define a var using type inference
 const conferenceTickets = 50
-var remainingTickets uint = 50 						// uint is a positive int
-var bookings = make([]map[string]string, 0)			// slice of maps
+var remainingTickets uint = 50 							// uint is a positive int
+var bookings = make([]UserData, 0)			// slice of maps
+
+// create struct
+type UserData struct {
+	firstName string
+	lastName string
+	email string
+	ticketAmount uint
+}
 
 func main() {
 
@@ -80,8 +87,8 @@ func printFirstNames() []string {
 	// iterate through bookings slice
 	// we get the index and value in each iteration
 	for _, booking := range bookings {
-		// append first name(from map) to firstNames slice
-		firstNames = append(firstNames, booking["firstName"])
+		// append first name(from struct) to firstNames slice
+		firstNames = append(firstNames, booking.firstName)
 	}
 
 	return firstNames
@@ -121,17 +128,15 @@ func bookTicket(ticketAmount uint, firstName string, lastName string, email stri
 	// decrement remaining tickets
 	remainingTickets = remainingTickets - ticketAmount
 
-	// create a map for a user
-	var userData = make(map[string]string)
-	// populate map
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	// convert uint to string 
-	userData["ticketAmount"] = strconv.FormatUint(uint64(ticketAmount), 10)
+	// populate userData struct
+	var userData = UserData {
+		firstName: firstName,
+		lastName: lastName,
+		email: email,
+		ticketAmount: ticketAmount,
+	}
 
-
-	// append map to next position in slice of maps
+	// append map to next position in slice of UserData
 	bookings = append(bookings, userData)
 
 	fmt.Printf("List of bookings: %v\n", bookings)
