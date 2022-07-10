@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"booking-app/helper"
+	"strconv"
 )
 
 // package level variables(all functions can access):
@@ -11,8 +11,8 @@ import (
 // define variables/const (type inference happens)
 var conferenceName = "Go Conference" // alternative way to define a var using type inference
 const conferenceTickets = 50
-var remainingTickets uint = 50 		// uint is a positive int
-var bookings[]string				// slice
+var remainingTickets uint = 50 						// uint is a positive int
+var bookings = make([]map[string]string, 0)			// slice of maps
 
 func main() {
 
@@ -31,7 +31,7 @@ func main() {
 		// check validations	
 		if isValidName && isEmailValid && isTicketsAmountValid{
 			// call function to book tickets
-			bookTicket(ticketAmount, firstName, lastName)
+			bookTicket(ticketAmount, firstName, lastName, email)
 
 			// call function to print first names
 			firstNames := printFirstNames()
@@ -80,10 +80,8 @@ func printFirstNames() []string {
 	// iterate through bookings slice
 	// we get the index and value in each iteration
 	for _, booking := range bookings {
-		// splits string with white space as separator (we get an array with 2 elements)
-		var names = strings.Fields(booking)
-		// append first name(names[0]) to firstNames slice
-		firstNames = append(firstNames, names[0])
+		// append first name(from map) to firstNames slice
+		firstNames = append(firstNames, booking["firstName"])
 	}
 
 	return firstNames
@@ -118,10 +116,23 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, email, ticketAmount
 }
 
-//
-func bookTicket(ticketAmount uint, firstName string, lastName string) {
+// funtion to perform ticker booking
+func bookTicket(ticketAmount uint, firstName string, lastName string, email string) {
 	// decrement remaining tickets
 	remainingTickets = remainingTickets - ticketAmount
-	// append info to next position in slice
-	bookings = append(bookings, firstName + " " + lastName)
+
+	// create a map for a user
+	var userData = make(map[string]string)
+	// populate map
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	// convert uint to string 
+	userData["ticketAmount"] = strconv.FormatUint(uint64(ticketAmount), 10)
+
+
+	// append map to next position in slice of maps
+	bookings = append(bookings, userData)
+
+	fmt.Printf("List of bookings: %v\n", bookings)
 }
