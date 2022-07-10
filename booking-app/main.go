@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"booking-app/helper"
+	"time"
+	"sync"
 )
 
 // package level variables(all functions can access):
@@ -21,6 +23,8 @@ type UserData struct {
 	ticketAmount uint
 }
 
+var wg = sync.WaitGroup{}
+
 func main() {
 
 	// call greet users function passing params
@@ -28,7 +32,7 @@ func main() {
 
 	// loop through user's input code
 	// infinte loop
-	for {
+	// for {
 		// call function to get user inuput
 		firstName, lastName, email, ticketAmount := getUserInput()		
 
@@ -39,6 +43,11 @@ func main() {
 		if isValidName && isEmailValid && isTicketsAmountValid{
 			// call function to book tickets
 			bookTicket(ticketAmount, firstName, lastName, email)
+
+			// add 1 goroutine to waitgroup
+			wg.Add(1)
+			// call function to "send" ticket using cncurrency
+			go sendTicket(ticketAmount, firstName, lastName, email)
 
 			// call function to print first names
 			firstNames := printFirstNames()
@@ -51,7 +60,7 @@ func main() {
 			if remainingTickets <= 0 {
 				fmt.Println("Our conference is booked. Come back next year")
 				// break out of loop (end program)
-				break
+				// break
 			}	
 		} else {
 			if !isValidName {
@@ -62,9 +71,11 @@ func main() {
 				fmt.Println("Invalid ticket amount, please try again!")
 			}
 			// skipt to next loop iteration
-			continue
+			// continue
 		}
-	}
+		// waits all other threads on waitgroup to finish before exiting main
+		wg.Wait()
+	// }
 }
 
 // function to print greeting message
@@ -140,4 +151,15 @@ func bookTicket(ticketAmount uint, firstName string, lastName string, email stri
 	bookings = append(bookings, userData)
 
 	fmt.Printf("List of bookings: %v\n", bookings)
+}
+
+// function to simulate sending ticket (simulates async operation)
+func sendTicket(ticketAmount uint, firstName string, lastName string, email string) {
+	// sleep 10 seconds
+	time.Sleep(10 * time.Second)
+	// save formatted string into var
+	var ticket = fmt.Sprintf("\n%v tickets for %v %v\n", ticketAmount, firstName, lastName)
+	fmt.Printf("Sending ticket:\n %v \nto email address: %v\n", ticket, email)
+	// tell waitgroup that this goroutine is done
+	wg.Done()
 }
