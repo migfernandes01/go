@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"log"
-	"main/src/microservices/restful-services/handlers"
+	"microservices/restful-services/handlers"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/gorilla/mux"
 	// "./handlers"
 )
 
@@ -17,10 +19,25 @@ func main() {
 	// create a "new products" handler
 	ph := handlers.NewProducts(l)
 
-	// create new http serve mux
-	sm := http.NewServeMux()
-	// assign hh handler to "/" path on new surve mux
-	sm.Handle("/", ph)
+	// create new router
+	sm := mux.NewRouter()
+
+	// new subrouter for GET requests
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	// call GetProducts form ph when GET to /
+	getRouter.HandleFunc("/", ph.GetProducts)
+
+	// new subrouter for PUT requests
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	// call UpdateProducts using a regex for id param
+	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProduct)
+	putRouter.Use(ph.MiddlewareProductValidation)
+
+	// new subrouter for POST requests
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	// call AddProduct using a regex for id param
+	postRouter.HandleFunc("/", ph.AddProduct)
+	postRouter.Use(ph.MiddlewareProductValidation)
 	
 	// create a new instance of http Server
 	s := &http.Server{
